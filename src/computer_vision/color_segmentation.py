@@ -31,6 +31,7 @@ def image_print(img):
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
 
+
 def cd_color_segmentation(image, template=None, is_line_follower=False):
 	"""
 	Implement the cone detection using color segmentation algorithm
@@ -44,46 +45,30 @@ def cd_color_segmentation(image, template=None, is_line_follower=False):
 	if isinstance(image, type(None)):
 		return ((0,0),(0,0))
 	
-	#Reduce image noise
+	# Reduce image noise
 	blurred_image = cv2.GaussianBlur(image, (3,3), 0)
 	blurred_image = cv2.erode(blurred_image, (3,3))
 	blurred_image = cv2.dilate(blurred_image, (3,3))
 
-	if is_line_follower:
-		blurred_image = cv2.bitwise_and(blurred_image, blurred_image, mask=line_follower_mask)
-
-	# Convert image to HSV
-	image_hsv = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HSV)
+	# Convert image to HSL
+	image_hls = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HLS)
 
 	# Create Color Mask
-	light_orange = (1, 190, 0)
-	dark_orange = (15, 255, 255)
-	color_mask = cv2.inRange(image_hsv, light_orange, dark_orange)
-	#print(color_mask)
+	light_gray = (0, 190, 0)
+	dark_gray = (255, 270, 255)
+	color_mask = cv2.inRange(image_hls, light_gray, dark_gray)
 
-	# Extract out Cone
-	filtered_image = cv2.bitwise_and(image, image, mask=color_mask)
-	#image_print(filtered_image)
+	# Filter to Lane Color
+	_,_, filtered_image = cv2.split(cv2.bitwise_and(image, image, mask=color_mask))
+	image_print(filtered_image)
 
-	try:
-		# Identify Contours
-		_, thresholded_image = cv2.threshold(color_mask, 40, 255, cv2.THRESH_BINARY)
-		_, contours, _  = cv2.findContours(thresholded_image,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-		
-		# Choose contour of largest area
-		best_contour = max(contours, key=cv2.contourArea)
-		x,y,w,h = cv2.boundingRect(best_contour)
-		bounding_box = ((x,y), (x+w, y+h))
+	# Obstruct image view
+	if is_line_follower:
+		filtered_image = cv2.bitwise_and(filtered_image, filtered_image, mask=line_follower_mask)
 
-		# Visualize Bounding Box
-		cv2.rectangle(image,bounding_box[0],bounding_box[1],(0,255,0),2)
-		image_print(image)
+	# Extract lanes through Hough Transforms
+	lanes = cv2.HoughLinesP(filtered_image, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
 
-		# Return bounding box
-		return bounding_box
-	
-	except:
-		return ((0,0),(0,0))
 
-#cd_color_segmentation(cv2.imread("./test_images_cone/test7.jpg"))
-#Test 9 is sketch
+
+cd_color_segmentation(cv2.imread("./racetrack_images/lane_3/image1.png"))
