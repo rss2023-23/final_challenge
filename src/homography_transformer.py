@@ -43,10 +43,10 @@ METERS_PER_INCH = 0.0254
 
 class HomographyTransformer:
     def __init__(self):
-        self.cone_px_sub = rospy.Subscriber("/relative_cone_px", LaneLocationPixel, self.cone_detection_callback)
-        self.cone_pub = rospy.Publisher("/relative_cone", LaneLocation, queue_size=10)
+        self.lane_px_sub = rospy.Subscriber("/relative_lane_px", LaneLocationPixel, self.lane_detection_callback)
+        self.lane_pub = rospy.Publisher("/relative_lane", LaneLocation, queue_size=10)
 
-        self.marker_pub = rospy.Publisher("/cone_marker",
+        self.marker_pub = rospy.Publisher("/lane_marker",
             Marker, queue_size=1)
 
         if not len(PTS_GROUND_PLANE) == len(PTS_IMAGE_PLANE):
@@ -65,7 +65,7 @@ class HomographyTransformer:
         self.h, err = cv2.findHomography(np_pts_image, np_pts_ground)
 
 
-    def cone_detection_callback(self, msg):
+    def lane_detection_callback(self, msg):
         #Extract information from message
         u = msg.u
         v = msg.v
@@ -73,7 +73,7 @@ class HomographyTransformer:
         #Call to main function
         x, y = self.transformUvToXy(u, v)
 
-        # Visualize cone location
+        # Visualize lane location
         self.draw_marker(x,y,"base_link")
 
         #Publish relative xy position of object in real world
@@ -81,7 +81,7 @@ class HomographyTransformer:
         relative_xy_msg.x_pos = x
         relative_xy_msg.y_pos = y
 
-        self.cone_pub.publish(relative_xy_msg)
+        self.lane_pub.publish(relative_xy_msg)
 
 
     def transformUvToXy(self, u, v):
@@ -105,9 +105,9 @@ class HomographyTransformer:
         y = homogeneous_xy[1, 0]
         return x, y
 
-    def draw_marker(self, cone_x, cone_y, message_frame):
+    def draw_marker(self, lane_x, lane_y, message_frame):
         """
-        Publish a marker to represent the cone in rviz.
+        Publish a marker to represent the lane in rviz.
         (Call this function if you want)
         """
         marker = Marker()
@@ -121,8 +121,8 @@ class HomographyTransformer:
         marker.color.r = 1.0
         marker.color.g = .5
         marker.pose.orientation.w = 1.0
-        marker.pose.position.x = cone_x
-        marker.pose.position.y = cone_y
+        marker.pose.position.x = lane_x
+        marker.pose.position.y = lane_y
         self.marker_pub.publish(marker)
 
 

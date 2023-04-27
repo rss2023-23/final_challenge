@@ -8,15 +8,13 @@ from final_challenge.msg import LaneLocation, PurePursuitError
 from ackermann_msgs.msg import AckermannDriveStamped
 from ackermann_msgs.msg import AckermannDrive
 
-class ParkingController():
+class LanePursuit():
     """
-    A controller for parking in front of a cone.
-    Listens for a relative cone location and publishes control commands.
-    Can be used in the simulator and on the real robot.
+    A controller for applying Pure Pursuit to lane following
     """
     def __init__(self):
-        rospy.Subscriber("/relative_cone", LaneLocation,
-            self.relative_cone_callback)
+        rospy.Subscriber("/relative_lane", LaneLocation,
+            self.relative_lane_callback)
 
         DRIVE_TOPIC = rospy.get_param("~drive_topic") # set in launch file; different for simulator vs racecar
         self.drive_pub = rospy.Publisher(DRIVE_TOPIC,
@@ -30,7 +28,7 @@ class ParkingController():
         self.VELOCITY = rospy.get_param('VELOCITY', 0.6)
         self.lookahead = rospy.get_param('lookahead',2.0)
 
-    def relative_cone_callback(self, msg):
+    def relative_lane_callback(self, msg):
         """
         Drive towards msg.x, msg.y using pure pursuit.
         """
@@ -43,7 +41,8 @@ class ParkingController():
         
         self.drive(self.speed, self.steering_angle)
 
-        self.error_publisher()
+        if self.error_pub.get_num_connections() >= 0:
+            self.error_publisher()
 
     def drive(self, speed = 0, steering_angle = 0):
         """
@@ -61,7 +60,7 @@ class ParkingController():
 
     def error_publisher(self):
         """
-        Publish the error between the car and the cone. We will view this
+        Publish the error between the car and the lane. We will view this
         with rqt_plot to plot the success of the controller
         """
         error_msg = PurePursuitError()
@@ -75,8 +74,8 @@ class ParkingController():
 
 if __name__ == '__main__':
     try:
-        rospy.init_node('ParkingController', anonymous=True)
-        ParkingController()
+        rospy.init_node('LanePursuit', anonymous=True)
+        LanePursuit()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
