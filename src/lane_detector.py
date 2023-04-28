@@ -38,7 +38,10 @@ class LaneDetector():
         # Convert ROS image to OpenCV Image
         image = self.bridge.imgmsg_to_cv2(image_msg, "bgr8")
         lane_pursuit_point = cd_color_segmentation(image)
-        self.lane_pub.publish(lane_pursuit_point)
+        pixel = LaneLocationPixel()
+        pixel.u = lane_pursuit_point[0]
+        pixel.v = lane_pursuit_point[1]
+        self.lane_pub.publish(pixel)
 
         # Publish debug if needed
         if self.debug_pub.get_num_connections() >= 0:

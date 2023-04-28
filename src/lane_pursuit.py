@@ -32,14 +32,14 @@ class LanePursuit():
         """
         Drive towards msg.x, msg.y using pure pursuit.
         """
-        relative_x = msg.x_pose
+        relative_x = msg.x_pos
         relative_y = msg.y_pos
         L = self.wheelbase_length
         eta = math.atan2(relative_y, relative_x)
         
         self.steering_angle = math.atan(2*L*math.sin(eta)/self.lookahead)
         
-        self.drive(self.speed, self.steering_angle)
+        self.drive(self.VELOCITY, self.steering_angle)
 
         if self.error_pub.get_num_connections() >= 0:
             self.error_publisher()

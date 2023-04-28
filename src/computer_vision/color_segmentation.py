@@ -82,7 +82,7 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 
 	# Find lines through Hough Transforms
 	lines = cv2.HoughLinesP(filtered_image, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-	lines = lines if lines != None else []
+	lines = lines if isinstance(lines, list) else []
 
 	# Extract potential left and right lanes
 	left_lanes = []
