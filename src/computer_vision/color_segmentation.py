@@ -28,7 +28,7 @@ RIGHT_BOUND = int(WIDTH * (6.0/10.0))  # Increasing this ignores potential right
 VERTICAL_SLOPE = 0.25 # What slope of line do we want to consider a lane?
 
 # Important Tuning Parameters
-LOOKAHEAD = int(float(HEIGHT) * 0.75) # Decreasing this makes the target point further away from the camera
+LOOKAHEAD = int(float(HEIGHT) * 0.5) # Decreasing this makes the target point further away from the camera
 
 mask_dimensions = np.array([
 				[(-VERTICAL_OFFSET, HEIGHT), (int(WIDTH * 0.5), PEAK_HEIGHT), (WIDTH+VERTICAL_OFFSET, HEIGHT)]
@@ -82,7 +82,7 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 
 	# Find lines through Hough Transforms
 	lines = cv2.HoughLinesP(filtered_image, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-	lines = lines if isinstance(lines, type(np.array([1]))) else []
+	lines = lines if not isinstance(lines, type(None)) else []
 
 	# Extract potential left and right lanes
 	left_lanes = []
@@ -130,5 +130,5 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 
 if __name__ == "__main__":
 	for i in range(1,70):
-		print(i)
 		print(cd_color_segmentation(cv2.imread("./racetrack_images/lane_3/image" + str(i) + ".png"), obstruct_view=True, visualize=True))
+		#print(cd_color_segmentation(cv2.imread("../test.png"), obstruct_view=True, visualize=True))
