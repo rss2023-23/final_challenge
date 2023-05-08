@@ -26,7 +26,7 @@ VERTICAL_OFFSET = 650 # Decreasing raises the height where we start obscuring vi
 # Line Following Parameters
 LEFT_BOUND = int(WIDTH*(2.5/10.0)) # Decreasing this ignores potential left lanes further right
 RIGHT_BOUND = int(WIDTH * (9.0/10.0))  # Increasing this ignores potential right lanes further left
-VERTICAL_SLOPE = 0.25 # What slope of line do we want to consider a lane?
+VERTICAL_SLOPE = 0.24 # What slope of line do we want to consider a lane?
 
 # Important Tuning Parameters
 LOOKAHEAD = int(float(HEIGHT) * 0.5) # Decreasing this makes the target point further away from the camera
