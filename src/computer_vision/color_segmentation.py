@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import pdb
+import warnings
 
 #################### X-Y CONVENTIONS #########################
 # 0,0  X  > > > > >
@@ -23,8 +24,8 @@ PEAK_HEIGHT = int(float(HEIGHT) * 0.35) # What camera height do we want to full 
 VERTICAL_OFFSET = 650 # Decreasing raises the height where we start obscuring view edges (triangular mask)
 
 # Line Following Parameters
-LEFT_BOUND = int(WIDTH*(4.0/10.0)) # Decreasing this ignores potential left lanes further right
-RIGHT_BOUND = int(WIDTH * (6.0/10.0))  # Increasing this ignores potential right lanes further left
+LEFT_BOUND = int(WIDTH*(2.5/10.0)) # Decreasing this ignores potential left lanes further right
+RIGHT_BOUND = int(WIDTH * (9.0/10.0))  # Increasing this ignores potential right lanes further left
 VERTICAL_SLOPE = 0.25 # What slope of line do we want to consider a lane?
 
 # Important Tuning Parameters
@@ -90,9 +91,9 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 	for line in lines:
 		x_1, y_1, x_2, y_2 = line[0]
 		slope, intercept = np.polyfit((x_1, x_2), (y_1, y_2), 1)
-		if slope < -VERTICAL_SLOPE and x_1 < LEFT_BOUND and x_2 < RIGHT_BOUND:
+		if slope < -VERTICAL_SLOPE and x_1 < LEFT_BOUND:
 			left_lanes.append((slope, intercept))
-		elif slope > VERTICAL_SLOPE and x_1 > RIGHT_BOUND and x_2 > RIGHT_BOUND:
+		elif slope > VERTICAL_SLOPE and x_1 < RIGHT_BOUND:
 			right_lanes.append((slope, intercept))
 
 	# Handle Missing Lane Recovery
@@ -130,5 +131,5 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 
 if __name__ == "__main__":
 	for i in range(1,70):
-		print(cd_color_segmentation(cv2.imread("./racetrack_images/lane_3/image" + str(i) + ".png"), obstruct_view=True, visualize=True))
-		#print(cd_color_segmentation(cv2.imread("../test.png"), obstruct_view=True, visualize=True))
+		#print(cd_color_segmentation(cv2.imread("./racetrack_images/lane_3/image" + str(i) + ".png"), obstruct_view=True, visualize=True))
+		print(cd_color_segmentation(cv2.imread("../test.png"), obstruct_view=True, visualize=True))
