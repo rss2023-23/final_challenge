@@ -26,7 +26,7 @@ VERTICAL_OFFSET = 650 # Decreasing raises the height where we start obscuring vi
 # Line Following Parameters
 LEFT_BOUND = int(WIDTH*(2.5/10.0)) # Decreasing this ignores potential left lanes further right
 RIGHT_BOUND = int(WIDTH * (9.0/10.0))  # Increasing this ignores potential right lanes further left
-VERTICAL_SLOPE = 0.35 # What slope of line do we want to consider a lane?
+VERTICAL_SLOPE = 0.26 # What slope of line do we want to consider a lane?
 
 # Important Tuning Parameters
 LOOKAHEAD = int(float(HEIGHT) * 0.5) # Decreasing this makes the target point further away from the camera
@@ -69,7 +69,9 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 
 	# Filter to Lane Color
 	_,_, filtered_image = cv2.split(cv2.bitwise_and(image, image, mask=color_mask))
-	if visualize:
+	filtered_image = cv2.Canny(filtered_image, 100, 200)
+        
+    if visualize:
 		image_print(image)
 		image_print(filtered_image)
 	
