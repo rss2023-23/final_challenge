@@ -27,7 +27,7 @@ class LanePursuit():
         self.wheelbase_length = 0.325
         self.max_turn = 0
 
-        self.VELOCITY = rospy.get_param('VELOCITY', 1.0)
+        self.VELOCITY = rospy.get_param('VELOCITY', 2.5)
         self.lookahead = rospy.get_param('lookahead',2.5)
 
         self.x_list = deque([0 for i in range(1)])
@@ -38,8 +38,7 @@ class LanePursuit():
         Drive towards msg.x, msg.y using pure pursuit.
         """
         self.relative_x = msg.x_pos
-        #relative_y = msg.y_pos - 0.14 Car 56
-        self.relative_y = msg.y_pos
+        self.relative_y = msg.y_pos - 0.14 # Car 56 and 69 needs this offset
 
         # Compute Running Average
         self.x_list.popleft()
@@ -69,6 +68,7 @@ class LanePursuit():
         ack_drive.steering_angle = steering_angle
         #self.max_turn = max(steering_angle, self.max_turn)
         #print(self.max_turn)
+
 
         #create AckermannDriveStamped object
         ack_stamp = AckermannDriveStamped()

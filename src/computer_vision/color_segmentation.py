@@ -69,8 +69,10 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 
 	# Filter to Lane Color
 	_,_, filtered_image = cv2.split(cv2.bitwise_and(image, image, mask=color_mask))
+
+	# Apply Canny Edge Detection
 	filtered_image = cv2.Canny(filtered_image, 100, 200)
-    
+        
 	if visualize:
 		image_print(image)
 		image_print(filtered_image)
