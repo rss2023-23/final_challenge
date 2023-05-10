@@ -25,7 +25,7 @@ class LaneDetector():
         # Subscribe to ZED camera RGB frames
         self.lane_pub = rospy.Publisher("/relative_lane_px", LaneLocationPixel, queue_size=10)
         self.debug_pub = rospy.Publisher("/lane_debug_img", Image, queue_size=10)
-        self.image_sub = rospy.Subscriber("/zed/zed_node/right/image_rect_color", Image, self.image_callback)
+        self.image_sub = rospy.Subscriber("/zed/zed_node/left/image_rect_color", Image, self.image_callback)
         self.bridge = CvBridge() # Converts between ROS images and OpenCV Images
 
     def image_callback(self, image_msg):

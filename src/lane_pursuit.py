@@ -67,8 +67,8 @@ class LanePursuit():
         ack_drive = AckermannDrive()
         ack_drive.speed = speed
         ack_drive.steering_angle = steering_angle
-        self.max_turn = max(steering_angle, self.max_turn)
-        print(self.max_turn)
+        #self.max_turn = max(steering_angle, self.max_turn)
+        #print(self.max_turn)
 
         #create AckermannDriveStamped object
         ack_stamp = AckermannDriveStamped()

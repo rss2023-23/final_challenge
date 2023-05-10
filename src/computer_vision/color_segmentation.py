@@ -26,7 +26,7 @@ VERTICAL_OFFSET = 650 # Decreasing raises the height where we start obscuring vi
 # Line Following Parameters
 LEFT_BOUND = int(WIDTH*(2.5/10.0)) # Decreasing this ignores potential left lanes further right
 RIGHT_BOUND = int(WIDTH * (9.0/10.0))  # Increasing this ignores potential right lanes further left
-VERTICAL_SLOPE = 0.24 # What slope of line do we want to consider a lane?
+VERTICAL_SLOPE = 0.35 # What slope of line do we want to consider a lane?
 
 # Important Tuning Parameters
 LOOKAHEAD = int(float(HEIGHT) * 0.5) # Decreasing this makes the target point further away from the camera
@@ -91,16 +91,16 @@ def cd_color_segmentation(image, obstruct_view=True, visualize=False):
 	for line in lines:
 		x_1, y_1, x_2, y_2 = line[0]
 		slope, intercept = np.polyfit((x_1, x_2), (y_1, y_2), 1)
-		if slope < -VERTICAL_SLOPE and x_1 < LEFT_BOUND:
+		if slope < -VERTICAL_SLOPE and x_1 < LEFT_BOUND and x_2 < LEFT_BOUND:
 			left_lanes.append((slope, intercept))
 		elif slope > VERTICAL_SLOPE and x_1 < RIGHT_BOUND:
 			right_lanes.append((slope, intercept))
 
 	# Handle Missing Lane Recovery
 	if len(left_lanes) == 0:
-		left_lanes.append((-1.0,0))
+		left_lanes.append((-0.5,250))
 	if len(right_lanes) == 0:
-		right_lanes.append((0.5, -100))
+		right_lanes.append((0.5, -75))
 
 	# Fit average left and right lane estimate
 	left_slope, left_intercept = np.average(left_lanes, axis=0)
